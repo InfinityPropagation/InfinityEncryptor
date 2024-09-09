@@ -34,7 +34,10 @@ import InfinityEncryptor from 'path/InfinityEncryptor.js';
 
 //parameters declaration
 const original = 'Infinity Propagation\n2024-09-06';
-const key = '12345'; //key shall not have 0, any 0's will be autoremoved
+
+const key = '12345'; 
+/* key has no length limit, the longer the length more exhaustive encryption/decryption to process. Key shall not have 0, any 0's will be autoremoved */
+
 const mode = 'YMDHI'; //optional parameter, default will be 'YMDHI'
 
 //initialize encyptor

@@ -75,9 +75,9 @@ $encrypted = $infinity_encryptor->Encrypt($original);<br/>
 $decrypted = $infinity_encryptor->Decrypt($encrypted);<br/>
 <br/>
 //test output<br/>
-echo "Original: $original<br/>";<br/>
-echo "Encrypted: $encrypted<br/>";<br/>
-echo "Decrypted: $decrypted<br/>";<br/>
+echo "Original: $original";<br/>
+echo "Encrypted: $encrypted";<br/>
+echo "Decrypted: $decrypted";<br/>
 
 ## Contributing
 

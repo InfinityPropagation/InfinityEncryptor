@@ -19,9 +19,8 @@ JS & PHP customizable Encryption/Decryption tool designed by InfinityPropagation
 ## Usage
 # Notes
 1. This encryption/decryption tool has two layers of modifiable security,
-    a: encryption key (key) represents the sequence of Alpha Numeric Mapping (The alphaNumMap is also modifiable).
-    b: encryption mode (mode) represents the time considerations during encryption/decryption, mode = '' will
-        turn of this layer of security.
+- a: Encryption Key (key) represents the sequence of Alpha Numeric Mapping (The alphaNumMap is also modifiable).
+- b: Encryption Mode (mode) represents the time considerations during encryption/decryption, mode = '' will turn of this layer of security.
 
 2. Altering mode Y M D H I arrangement will result different encrypt/decrypt sequence. eg: DMYIH
 
@@ -29,59 +28,60 @@ JS & PHP customizable Encryption/Decryption tool designed by InfinityPropagation
     will  not be encrypted.
 
 # TypeScript/Javascript
-//import the library
-import InfinityEncryptor from 'path/InfinityEncryptor.js';
-
-//parameters declaration
-const original = 'Infinity Propagation\n2024-09-06';
-
-const key = '12345'; 
-/* key has no length limit, the longer the length more exhaustive encryption/decryption to process. Key shall not have 0, any 0's will be autoremoved */
-
-const mode = 'YMDHI'; //optional parameter, default will be 'YMDHI'
-
-//initialize encyptor
-const Encryptor = new InfinityEncryptor(key, mode);
-
-//encrypt original text
-const encrypted = Encryptor.Encrypt(original);
-
-//decrypt original text
-const decrypted = Encryptor.Decrypt(encrypted);
-
-//test output
-console.log(
-    "Original: " + original + '\n' +
-    "Encrypted: " + encrypted + '\n' +
-    "Decrypted: " + decrypted + '\n'
-);
+//import the library<br/>
+import InfinityEncryptor from 'path/InfinityEncryptor.js';<br/>
+<br/>
+//parameters declaration<br/>
+const original = 'Infinity Propagation\n2024-09-06';<br/>
+<br/>
+const key = '12345'; <br/>
+/* key has no length limit, the longer the length more exhaustive encryption/decryption to process. Key shall not have 0, any 0's will be autoremoved */<br/>
+<br/>
+const mode = 'YMDHI'; //optional parameter, default will be 'YMDHI'<br/>
+<br/>
+//initialize encyptor<br/>
+const Encryptor = new InfinityEncryptor(key, mode);<br/>
+<br/>
+//encrypt original text<br/>
+const encrypted = Encryptor.Encrypt(original);<br/>
+<br/>
+//decrypt original text<br/>
+const decrypted = Encryptor.Decrypt(encrypted);<br/>
+<br/>
+//test output<br/>
+console.log(<br/>
+    "Original: " + original + '\n' +<br/>
+    "Encrypted: " + encrypted + '\n' +<br/>
+    "Decrypted: " + decrypted + '\n'<br/>
+);<br/>
 
 # PHP
-//import the library
-require_once("../plugins/InfinityEncryptor.php");
-
-//parameters declaration
-$original = "Infinity Propagation\n2024-09-06";
-$key = '12345'; //key shall not have 0, any 0's will be autoremoved
-$mode = 'YMDHI'; //optional parameter, default will be 'YMDHI'
-
-//initialize encyptor
-$infinity_encryptor = new InfinityEncryptor($key, $mode);
-
-//encrypt original text
-$encrypted = $infinity_encryptor->Encrypt($original);
-
-//decrypt encrypted text
-$decrypted = $infinity_encryptor->Decrypt($encrypted);
-
-//test output
-echo "Original: $original<br/>";
-echo "Encrypted: $encrypted<br/>";
-echo "Decrypted: $decrypted<br/>";
+//import the library<br/>
+require_once("../plugins/InfinityEncryptor.php");<br/>
+<br/>
+//parameters declaration<br/>
+$original = "Infinity Propagation\n2024-09-06";<br/>
+$key = '12345'; <br/>
+/* key has no length limit, the longer the length more exhaustive encryption/decryption to process. Key shall not have 0, any 0's will be autoremoved */<br/>
+$mode = 'YMDHI'; //optional parameter, default will be 'YMDHI'<br/>
+<br/>
+//initialize encyptor<br/>
+$infinity_encryptor = new InfinityEncryptor($key, $mode);<br/>
+<br/>
+//encrypt original text<br/>
+$encrypted = $infinity_encryptor->Encrypt($original);<br/>
+<br/>
+//decrypt encrypted text<br/>
+$decrypted = $infinity_encryptor->Decrypt($encrypted);<br/>
+<br/>
+//test output<br/>
+echo "Original: $original<br/>";<br/>
+echo "Encrypted: $encrypted<br/>";<br/>
+echo "Decrypted: $decrypted<br/>";<br/>
 
 ## Contributing
 
-studio: Infinity Propagation
+studio: Infinity Propagation<br/>
 programmer: Delon Twk
 
 ## License

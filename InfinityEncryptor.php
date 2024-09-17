@@ -139,13 +139,13 @@ try {
             $timeCode = $this->mode != '' ? $this->GetTimeCode($this->mode, 0) : '';
     
             //your encryption key gen algorithm/pattern here
-            return $this->key + $timeCode;
+            return $this->key . $timeCode;
         }
         private function GenerateDecryptionKey($level) {
             $timeCode = $this->mode != '' ? $this->GetTimeCode($this->mode, $level) : '';
     
             //your decryption key gen algorithm/pattern here, must match encryption pattern
-            return $this->ReverseSequence($this->key + $timeCode);
+            return $this->ReverseSequence($this->key . $timeCode);
         }
         private function GetTimeCode($mode, $level) {
             $dateNow = date('Y-m-d H:i:s');

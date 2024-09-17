@@ -77,7 +77,7 @@ class InfinityEncryptor {
         this.mode = (mode != undefined ? mode : 'YMDHI');
     }
     public Encrypt(subject: string) {
-        const enkey = this.GenerateEncryptionKey();
+        const enkey = this.GenerateEncryptionKey().replace(/0/g, '1');
         const subjectIndexArr = this.ConvertToIndexArr(nonstate.prefix + ':;:' + subject);
         const shuffledIndexArr = this.ShuffleIndexArr(subjectIndexArr, enkey);
         const encryptedString = this.ConvertFromIndexArr(shuffledIndexArr);
@@ -90,7 +90,7 @@ class InfinityEncryptor {
 
         //trial decrypt at level 0
         //decrption level indicates whether the data is received ontime, or 1 minute late
-        dekey = this.GenerateDecryptionKey(0); 
+        dekey = this.GenerateDecryptionKey(0).replace(/0/g, '1'); 
         subjectIndexArr = this.ConvertToIndexArr(subject);
         unShuffledIndexArr = this.UnShuffleIndexArr(subjectIndexArr, dekey);
         decryptedString = this.ConvertFromIndexArr(unShuffledIndexArr);
@@ -107,7 +107,7 @@ class InfinityEncryptor {
         } else {
             //trial decrypt at level 1
             //decrption level indicates whether the data is received ontime, or 1 minute late
-            dekey = this.GenerateDecryptionKey(1); 
+            dekey = this.GenerateDecryptionKey(1).replace(/0/g, '1'); 
             subjectIndexArr = this.ConvertToIndexArr(subject);
             unShuffledIndexArr = this.UnShuffleIndexArr(subjectIndexArr, dekey);
             decryptedString = this.ConvertFromIndexArr(unShuffledIndexArr);
@@ -142,66 +142,57 @@ class InfinityEncryptor {
     private GetTimeCode(mode: string, level: number) {
         const dateNow = new Date();
         const dateByLevel = new Date(dateNow.getTime() - (level * 60 * 1000));
-        const dateTimeArr = dateByLevel.toLocaleString('en-US', { hour12: false }).split(', ');
+        const dateTimeArr = dateByLevel.toLocaleString('en-US', { hour12: false, timeZone: 'UTC' }).split(', ');
         const dateArr = dateTimeArr[0].split('/');
         const timeArr = dateTimeArr[1].split(':');
-        const days = dateArr[0];
-        const months = dateArr[1];
+        const months = dateArr[0];
+        const days = dateArr[1];
         const years = dateArr[2];
         const hours = timeArr[0];
         const minutes = timeArr[1];
-        // const seconds = timeArr[2];
-
-        /**
-         * parseInt(years).toString()
-         * parseInt(months).toString()
-         * parseInt(days).toString()
-         * (parseInt(hours) + 1).toString()   //0 isn't allowed, 1 - 24
-         * (parseInt(minutes) + 1).toString() //0 isn't allowed, 1 - 61
-         */
 
         switch (mode) {
             default:
             case 'YMDHI':
-                return parseInt(years).toString() + parseInt(months).toString() + parseInt(days).toString() + (parseInt(hours) + 1).toString() + (parseInt(minutes) + 1).toString();
+                return years + months + days + hours + minutes;
             case 'MYDHI':
-                return parseInt(months).toString() + parseInt(years).toString() + parseInt(days).toString() + (parseInt(hours) + 1).toString() + (parseInt(minutes) + 1).toString();
+                return months + years + days + hours + minutes;
             case 'MDYHI':
-                return parseInt(months).toString() + parseInt(days).toString() + parseInt(years).toString() + (parseInt(hours) + 1).toString() + (parseInt(minutes) + 1).toString();
+                return months + days + years + hours + minutes;
             case 'MDHYI':
-                return parseInt(months).toString() + parseInt(days).toString() + (parseInt(hours) + 1).toString()  + parseInt(years).toString() + (parseInt(minutes) + 1).toString();
+                return months + days + hours  + years + minutes;
             case 'MDHIY':
-                return parseInt(months).toString() + parseInt(days).toString() + (parseInt(hours) + 1).toString() + (parseInt(minutes) + 1).toString() + parseInt(years).toString();
+                return months + days + hours + minutes + years;
             case 'DMHIY':
-                return parseInt(days).toString() + parseInt(months).toString() + (parseInt(hours) + 1).toString() + (parseInt(minutes) + 1).toString() + parseInt(years).toString();
+                return days + months + hours + minutes + years;
             case 'DHMIY':
-                return parseInt(days).toString() + (parseInt(hours) + 1).toString() + parseInt(months).toString() + (parseInt(minutes) + 1).toString() + parseInt(years).toString();
+                return days + hours + months + minutes + years;
             case 'DHIMY':
-                return parseInt(days).toString() + (parseInt(hours) + 1).toString() + (parseInt(minutes) + 1).toString() + parseInt(months).toString() + parseInt(years).toString();
+                return days + hours + minutes + months + years;
             case 'DHIYM':
-                return parseInt(days).toString() + (parseInt(hours) + 1).toString() + (parseInt(minutes) + 1).toString() + parseInt(years).toString() + parseInt(months).toString();
+                return days + hours + minutes + years + months;
             case 'HDIYM':
-                return (parseInt(hours) + 1).toString() + parseInt(days).toString() + (parseInt(minutes) + 1).toString() + parseInt(years).toString() + parseInt(months).toString();
+                return hours + days + minutes + years + months;
             case 'HIDYM':
-                return (parseInt(hours) + 1).toString() + (parseInt(minutes) + 1).toString() + parseInt(days).toString() + parseInt(years).toString() + parseInt(months).toString();
+                return hours + minutes + days + years + months;
             case 'HIYDM':
-                return (parseInt(hours) + 1).toString() + (parseInt(minutes) + 1).toString() + parseInt(years).toString() + parseInt(days).toString() + parseInt(months).toString();
+                return hours + minutes + years + days + months;
             case 'HIYMD':
-                return (parseInt(hours) + 1).toString() + (parseInt(minutes) + 1).toString() + parseInt(years).toString() + parseInt(months).toString() + parseInt(days).toString();
+                return hours + minutes + years + months + days;
             case 'IHYMD':
-                return  (parseInt(minutes) + 1).toString() + (parseInt(hours) + 1).toString() + parseInt(years).toString() + parseInt(months).toString() + parseInt(days).toString();
+                return  minutes + hours + years + months + days;
             case 'IYHMD':
-                return  (parseInt(minutes) + 1).toString() + parseInt(years).toString() + (parseInt(hours) + 1).toString() + parseInt(months).toString() + parseInt(days).toString();
+                return  minutes + years + hours + months + days;
             case 'IYMHD':
-                return  (parseInt(minutes) + 1).toString() + parseInt(years).toString() + parseInt(months).toString() + (parseInt(hours) + 1).toString() + parseInt(days).toString();
+                return  minutes + years + months + hours + days;
             case 'IYMDH':
-                return  (parseInt(minutes) + 1).toString() + parseInt(years).toString() + parseInt(months).toString() + parseInt(days).toString() + (parseInt(hours) + 1).toString();
+                return  minutes + years + months + days + hours;
             case 'YIMDH':
-                return  parseInt(years).toString() + (parseInt(minutes) + 1).toString() + parseInt(months).toString() + parseInt(days).toString() + (parseInt(hours) + 1).toString();
+                return  years + minutes + months + days + hours;
             case 'YMIDH':
-                return  parseInt(years).toString() + parseInt(months).toString() + (parseInt(minutes) + 1).toString() + parseInt(days).toString() + (parseInt(hours) + 1).toString();
+                return  years + months + minutes + days + hours;
             case 'YMDIH':
-                return  parseInt(years).toString() + parseInt(months).toString() + parseInt(days).toString()  + (parseInt(minutes) + 1).toString() + (parseInt(hours) + 1).toString();
+                return  years + months + days  + minutes + hours;
         }
     }
     private ReverseSequence(sequence: string) {

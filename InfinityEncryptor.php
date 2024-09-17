@@ -71,12 +71,12 @@ try {
             'prefix' => 'INFINITYENCRYPTOR'
         );
 
-        public function __construct($key, $mode = 'YMDHI' /** default mode */) {
+        public function __construct($key='88888888', $mode = 'YMDHI' /** default mode */) {
             $this->key = $key;
             $this->mode = $mode;
         }
         public function Encrypt($subject) {
-            $enkey = $this->GenerateEncryptionKey();
+            $enkey = str_replace('0', '1', $this->GenerateEncryptionKey());
             $subjectIndexArr = $this->ConvertToIndexArr($this->nonstate["prefix"] . ":;:" .$subject);
             $shuffledIndexArr = $this->ShuffleIndexArr($subjectIndexArr, $enkey);
             $encryptedString = $this->ConvertFromIndexArr($shuffledIndexArr);
@@ -87,7 +87,7 @@ try {
             $subjectIndexArr; $unShuffledIndexArr; $decryptedString;
             $decryptedSubjectArr; $decryptedPrefix; $decryptedSubject = '';
 
-            $dekey = $this->GenerateDecryptionKey(0);
+            $dekey = str_replace('0', '1', $this->GenerateDecryptionKey(0));
             $subjectIndexArr = $this->ConvertToIndexArr($subject);
             $unShuffledIndexArr = $this->UnShuffleIndexArr($subjectIndexArr, $dekey);
             $decryptedString = $this->ConvertFromIndexArr($unShuffledIndexArr);
@@ -106,7 +106,7 @@ try {
             } else {
                 //trial decrypt at level 1
                 //decrption level indicates whether the data is received ontime, or 1 minute late
-                $dekey = $this->GenerateDecryptionKey(1); 
+                $dekey = str_replace('0', '1', $this->GenerateDecryptionKey(1)); 
                 $subjectIndexArr = $this->ConvertToIndexArr($subject);
                 $unShuffledIndexArr = $this->UnShuffleIndexArr($subjectIndexArr, $dekey);
                 $decryptedString = $this->ConvertFromIndexArr($unShuffledIndexArr);
@@ -114,7 +114,7 @@ try {
                 $decryptedPrefix = $decryptedSubjectArr[0];
                 
                 if($decryptedPrefix == $this->nonstate["prefix"]) {
-                    //success decrypt at level 0
+                    //success decrypt at level 1
                     $i = 0;
                     foreach($decryptedSubjectArr as $decrypted) {
                         if($i != 0)
@@ -150,60 +150,60 @@ try {
         private function GetTimeCode($mode, $level) {
             $dateNow = date('Y-m-d H:i:s');
             $dateByLevel = new DateTime(date('Y-m-d H:i:s', strtotime($dateNow) - ($level * 60)));
+            $dateByLevel->setTimeZone(new DateTimeZone('UTC'));
 
-            $days = $dateByLevel->format('d');
-            $months = $dateByLevel->format('m');
+            $days = str_pad($dateByLevel->format('d'), 2, '0');
+            $months = str_pad($dateByLevel->format('m'), 2, '0');
             $years = $dateByLevel->format('Y');
-            $hours = $dateByLevel->format('H');
-            $minutes = $dateByLevel->format('i');
+            $hours = str_pad($dateByLevel->format('H'), 2, '0');
+            $minutes = str_pad($dateByLevel->format('i'), 2, '0');
 
             switch ($mode) {
                 default:
                 case 'YMDHI':
-                    return (string)intval($years) . (string)intval($months) . (string)intval($days) . (string)(intval($hours) + 1) . (string)(intval($minutes) + 1);
+                    return $years . $months . $days . $hours . $minutes;
                 case 'MYDHI':
-                    return (string)intval($months) . (string)intval($years) . (string)intval($days) . (string)(intval($hours) + 1) . (string)(intval($minutes) + 1);
+                    return $months . $years . $days . $hours . $minutes;
                 case 'MDYHI':
-                    return (string)intval($months) . (string)intval($days) . (string)intval($years) . (string)(intval($hours) + 1) . (string)(intval($minutes) + 1);
+                    return $months . $days . $years . $hours . $minutes;
                 case 'MDHYI':
-                    return (string)intval($months) . (string)intval($days) . (string)(intval($hours) + 1)  . (string)intval($years) . (string)(intval($minutes) + 1);
+                    return $months . $days . $hours . $years . $minutes;
                 case 'MDHIY':
-                    return (string)intval($months) . (string)intval($days) . (string)(intval($hours) + 1) . (string)(intval($minutes) + 1) . (string)intval($years);
+                    return $months . $days . $hours . $minutes . $years;
                 case 'DMHIY':
-                    return (string)intval($days) . (string)intval($months) . (string)(intval($hours) + 1) . (string)(intval($minutes) + 1) . (string)intval($years);
+                    return $days . $months . $hours . $minutes . $years;
                 case 'DHMIY':
-                    return (string)intval($days) . (string)(intval($hours) + 1) . (string)intval($months) . (string)(intval($minutes) + 1) . (string)intval($years);
+                    return $days . $hours . $months . $minutes . $years;
                 case 'DHIMY':
-                    return (string)intval($days) . (string)(intval($hours) + 1) . (string)(intval($minutes) + 1) . (string)intval($months) . (string)intval($years);
+                    return $days . $hours . $minutes . $months . $years;
                 case 'DHIYM':
-                    return (string)intval($days) . (string)(intval($hours) + 1) . (string)(intval($minutes) + 1) . (string)intval($years) . (string)intval($months);
+                    return $days . $hours . $minutes . $years . $months;
                 case 'HDIYM':
-                    return (string)(intval($hours) + 1) . (string)intval($days) . (string)(intval($minutes) + 1) . (string)intval($years) . (string)intval($months);
+                    return $hours . $days . $minutes . $years . $months;
                 case 'HIDYM':
-                    return (string)(intval($hours) + 1) . (string)(intval($minutes) + 1) . (string)intval($days) . (string)intval($years) . (string)intval($months);
+                    return $hours . $minutes . $days . $years . $months;
                 case 'HIYDM':
-                    return (string)(intval($hours) + 1) . (string)(intval($minutes) + 1) . (string)intval($years) . (string)intval($days) . (string)intval($months);
+                    return $hours . $minutes . $years . $days . $months;
                 case 'HIYMD':
-                    return (string)(intval($hours) + 1) . (string)(intval($minutes) + 1) . (string)intval($years) . (string)intval($months) . (string)intval($days);
+                    return $hours . $minutes . $years . $months . $days;
                 case 'IHYMD':
-                    return  (string)(intval($minutes) + 1) . (string)(intval($hours) + 1) . (string)intval($years) . (string)intval($months) . (string)intval($days);
+                    return  $minutes . $hours  . $years. $months . $days;
                 case 'IYHMD':
-                    return  (string)(intval($minutes) + 1) . (string)intval($years) . ((string)intval($hours) + 1) . (string)intval($months) . (string)intval($days);
+                    return  $minutes . $years . $hours . $months . $days;
                 case 'IYMHD':
-                    return  (string)(intval($minutes) + 1) . (string)intval($years) . (string)intval($months) . (string)(intval($hours) + 1) . (string)intval($days);
+                    return  $minutes . $years . $months . $hours  . $days;
                 case 'IYMDH':
-                    return  (string)(intval($minutes) + 1) . (string)intval($years) . (string)intval($months) . (string)intval($days) . (string)(intval($hours) + 1);
+                    return  $minutes . $years . $months . $days . $hours;
                 case 'YIMDH':
-                    return  (string)intval($years) . (string)(intval($minutes) + 1) . (string)intval($months) . (string)intval($days) . (string)(intval($hours) + 1);
+                    return  $years . $minutes . $months . $days . $hours;
                 case 'YMIDH':
-                    return  (string)intval($years) . (string)intval($months) . (string)(intval($minutes) + 1) . (string)intval($days) . (string)(intval($hours) + 1);
+                    return  $years . $months . $minutes . $days . $hours;
                 case 'YMDIH':
-                    return  (string)intval($years) . (string)intval($months) . (string)intval($days)  . (string)(intval($minutes) + 1) . (string)(intval($hours) + 1);
+                    return  $years . $months . $days  . $minutes . $hours;
             }
         }
         private function ReverseSequence($sequence) {
             $reversed = '';
-
             foreach(str_split($sequence) as $s) {
                 $reversed = $s . $reversed;
             }

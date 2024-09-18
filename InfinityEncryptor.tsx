@@ -145,11 +145,11 @@ class InfinityEncryptor {
         const dateTimeArr = dateByLevel.toLocaleString('en-US', { hour12: false, timeZone: 'UTC' }).split(', ');
         const dateArr = dateTimeArr[0].split('/');
         const timeArr = dateTimeArr[1].split(':');
-        const months = dateArr[0];
-        const days = dateArr[1];
+        const months = dateArr[0].padStart(2, '0');
+        const days = dateArr[1].padStart(2, '0');;
         const years = dateArr[2];
-        const hours = timeArr[0];
-        const minutes = timeArr[1];
+        const hours = timeArr[0].padStart(2, '0');
+        const minutes = timeArr[1].padStart(2, '0');
 
         switch (mode) {
             default:

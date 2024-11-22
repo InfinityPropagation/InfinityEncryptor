@@ -101,7 +101,7 @@ class InfinityEncryptor {
             //success decrypt at level 0
             decryptedSubjectArr.map((decrypted: string, i: number) => {
                 if(i != 0)
-                    decryptedSubject += decrypted;
+                    decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ':;:' + decrypted);
             });
             return decryptedSubject;
         } else {
@@ -117,7 +117,7 @@ class InfinityEncryptor {
                 //success decrypt at level 0
                 decryptedSubjectArr.map((decrypted: string, i: number) => {
                     if(i != 0)
-                        decryptedSubject += decrypted;
+                        decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ':;:' + decrypted);
                 });
                 return decryptedSubject;
             } else {
@@ -146,7 +146,7 @@ class InfinityEncryptor {
         const dateArr = dateTimeArr[0].split('/');
         const timeArr = dateTimeArr[1].split(':');
         const months = dateArr[0].padStart(2, '0');
-        const days = dateArr[1].padStart(2, '0');;
+        const days = dateArr[1].padStart(2, '0');
         const years = dateArr[2];
         const hours = timeArr[0].padStart(2, '0');
         const minutes = timeArr[1].padStart(2, '0');

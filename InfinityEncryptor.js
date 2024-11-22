@@ -108,7 +108,7 @@ class InfinityEncryptor {
     if (decryptedPrefix == nonstate.prefix) {
       //success decrypt at level 0
       decryptedSubjectArr.map((decrypted, i) => {
-        if (i != 0) decryptedSubject += decrypted
+        if (i != 0) decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ':;:' + decrypted)
       })
       return decryptedSubject
     } else {
@@ -123,7 +123,7 @@ class InfinityEncryptor {
       if (decryptedPrefix == nonstate.prefix) {
         //success decrypt at level 0
         decryptedSubjectArr.map((decrypted, i) => {
-          if (i != 0) decryptedSubject += decrypted
+          if (i != 0) decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ':;:' + decrypted)
         })
         return decryptedSubject
       } else {

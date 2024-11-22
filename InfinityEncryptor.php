@@ -99,7 +99,7 @@ try {
                 $i = 0;
                 foreach($decryptedSubjectArr as $decrypted) {
                     if($i != 0)
-                        $decryptedSubject .= $decrypted;
+                        $decryptedSubject .= (strlen($decryptedSubject) == 0 ? $decrypted : ':;:' . $decrypted);
                     $i++;
                 }
                 return $decryptedSubject;
@@ -118,7 +118,7 @@ try {
                     $i = 0;
                     foreach($decryptedSubjectArr as $decrypted) {
                         if($i != 0)
-                            $decryptedSubject .= $decrypted;
+                            $decryptedSubject .= (strlen($decryptedSubject) == 0 ? $decrypted : ':;:' . $decrypted);
                         $i++;
                     }
                     return $decryptedSubject;

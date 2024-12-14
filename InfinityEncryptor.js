@@ -87,6 +87,13 @@ class InfinityEncryptor {
     const encryptedString = this.ConvertFromIndexArr(shuffledIndexArr)
     return encryptedString
   }
+  Encrypt_GenKey(subject) {
+    const enkey = this.GenerateEncryptionKey().replace(/0/g, '1');
+    const subjectIndexArr = this.ConvertToIndexArr(nonstate.prefix + ':;:' + subject);
+    const shuffledIndexArr = this.ShuffleIndexArr(subjectIndexArr, enkey);
+    const encryptedString = this.ConvertFromIndexArr(shuffledIndexArr);
+    return {key: enkey, encrypted: encryptedString};
+  }
   Decrypt(subject) {
     let dekey
     let subjectIndexArr
@@ -131,6 +138,24 @@ class InfinityEncryptor {
       }
     }
   }
+  Decrypt_Enkey(subject, enkey) {
+    const dekey = this.GenerateDecryptionKey_Enkey(enkey);
+    const subjectIndexArr = this.ConvertToIndexArr(subject);
+    const unShuffledIndexArr = this.UnShuffleIndexArr(subjectIndexArr, dekey);
+    const decryptedString = this.ConvertFromIndexArr(unShuffledIndexArr);
+    const decryptedSubjectArr = decryptedString.split(':;:');
+    const decryptedPrefix = decryptedSubjectArr[0];
+    let decryptedSubject = "";
+    if(decryptedPrefix == nonstate.prefix) {
+        decryptedSubjectArr.map((decrypted, i) => {
+            if(i != 0)
+                decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ':;:' + decrypted);
+        });
+    } else {
+        return 'IEncryptorDecryptWithEnkeyErr prefixUnMatch _false';
+    }
+    return decryptedSubject;
+  }
 
   //privates
   GenerateEncryptionKey() {
@@ -144,6 +169,9 @@ class InfinityEncryptor {
 
     //your decryption key gen algorithm/pattern here, must match encryption pattern
     return this.ReverseSequence(this.key + timeCode)
+  }
+  GenerateDecryptionKey_Enkey(enkey) {
+    return this.ReverseSequence(enkey);
   }
   GetTimeCode(mode, level) {
     const dateNow = new Date()

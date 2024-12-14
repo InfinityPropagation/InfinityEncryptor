@@ -82,6 +82,13 @@ try {
             $encryptedString = $this->ConvertFromIndexArr($shuffledIndexArr);
             return $encryptedString;
         }
+        public Encrypt_GenKey($subject) {
+            $enkey = str_replace('0', '1', $this->GenerateEncryptionKey());
+            $subjectIndexArr = $this->ConvertToIndexArr($this->nonstate["prefix"] . ":;:" .$subject);
+            $shuffledIndexArr = $this->ShuffleIndexArr($subjectIndexArr, $enkey);
+            $encryptedString = $this->ConvertFromIndexArr($shuffledIndexArr);
+            return array("kkey" => $enkey, "encrypted" => $encryptedString);
+        }
         public function Decrypt($subject) {
             $dekey;
             $subjectIndexArr; $unShuffledIndexArr; $decryptedString;
@@ -126,12 +133,24 @@ try {
                     return 'IEncryptorDecrypt _false';
                 }
             }
-
-            // $dekey = $this->GenerateDecryptionKey();
-            // $subjectIndexArr = $this->ConvertToIndexArr($subject);
-            // $unShuffledIndexArr = $this->UnShuffleIndexArr($subjectIndexArr, $dekey);
-            // $decryptedString = $this->ConvertFromIndexArr($unShuffledIndexArr);
-            // return $decryptedString;
+        }
+        public Decrypt_Enkey($subject, $enkey) {
+            $dekey = $this->GenerateDecryptionKey_Enkey($enkey);
+            $subjectIndexArr = $this->ConvertToIndexArr($subject);
+            $unShuffledIndexArr = $this->UnShuffleIndexArr($subjectIndexArr, $dekey);
+            $decryptedString = $this->ConvertFromIndexArr($unShuffledIndexArr);
+            $decryptedSubjectArr = explode(":;:", $decryptedString);
+            $decryptedPrefix = $decryptedSubjectArr[0];
+            $decryptedSubject = "";
+            if($decryptedPrefix == $this->nonstate["prefix"]) {
+                $decryptedSubjectArr.map(($decrypted, $i) => {
+                    if($i != 0)
+                        $decryptedSubject .= (strlen($decryptedSubject) == 0 ? $decrypted : ':;:' . $decrypted);
+                });
+            } else {
+                return 'IEncryptorDecryptWithEnkeyErr prefixUnMatch _false';
+            }
+            return $decryptedSubject;
         }
 
         //privates
@@ -146,6 +165,9 @@ try {
     
             //your decryption key gen algorithm/pattern here, must match encryption pattern
             return $this->ReverseSequence($this->key . $timeCode);
+        }
+        private GenerateDecryptionKey_Enkey($enkey) {
+            return $this->ReverseSequence($enkey);
         }
         private function GetTimeCode($mode, $level) {
             $dateNow = date('Y-m-d H:i:s');

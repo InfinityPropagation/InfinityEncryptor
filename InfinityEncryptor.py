@@ -91,9 +91,18 @@ class InfinityEncryptor:
         encryptedString = self.ConvertFromIndexArr(shuffledIndexArr)
         return encryptedString;
 
+    def Encrypt_GenKey(self, subject):
+        enkey = self.GenerateEncryptionKey().replace("0", '1');
+        subjectIndexArr  = self.ConvertToIndexArr(
+            self.nonstate['prefix'] + ':;:' + subject
+        );
+        shuffledIndexArr = self.ShuffleIndexArr(subjectIndexArr, enkey);
+        encryptedString = self.ConvertFromIndexArr(shuffledIndexArr)
+        return {"key": enkey, "encryoted": encryptedString};
+
     def Decrypt(self, subject):
         dekey = self.GenerateDecryptionKey(0).replace('0', '1');
-        subjectIndexArr  = self.GenerateDecryptionKey(0).replace('0', '1');
+        subjectIndexArr  = self.ConvertToIndexArr(subject);
         unShuffledIndexArr = self.UnShuffleIndexArr(subjectIndexArr, dekey);
         decryptedString = self.ConvertFromIndexArr(unShuffledIndexArr);
         decryptedSubjectArr = decryptedString.split(":;:");
@@ -115,11 +124,11 @@ class InfinityEncryptor:
             # trial decrypt at level 1
             # decryption level indicates whethher the data is received ontime, or 1 minute late
             dekey = self.GenerateDecryptionKey(1).replace('0', '1');
-            subjectIndexArr = self.ConvertToIndexArr(subject)
-            unShuffledIndexArr = self.UnShuffleIndexArr(subjectIndexArr, dekey)
-            decryptedString = self.ConvertFromIndexArr(unShuffledIndexArr)
-            decryptedSubjectArr = decryptedString.split(":;:")
-            decryptedPrefix = decryptedSubjectArr[0]
+            subjectIndexArr = self.ConvertToIndexArr(subject);
+            unShuffledIndexArr = self.UnShuffleIndexArr(subjectIndexArr, dekey);
+            decryptedString = self.ConvertFromIndexArr(unShuffledIndexArr);
+            decryptedSubjectArr = decryptedString.split(":;:");
+            decryptedPrefix = decryptedSubjectArr[0];
             if decryptedPrefix == self.nonstate['prefix']:
                 # success decrypt at level 0
                 i = 0;
@@ -130,17 +139,36 @@ class InfinityEncryptor:
                         else:
                             decryptedSubject += ':;:' + decrypted;
                     i += 1;
-                return decryptedSubject
+                return decryptedSubject;
             else :
                 return "IEncryptorDecrypt _false";
 
+    def Decrypt_Enkey(self, subject, enkey):
+        dekey = self.GenerateDecryptionKey_Enkey(enkey).replace('0', '1');
+        subjectIndexArr  = self.GenerateDecryptionKey(0).replace('0', '1');
+        unShuffledIndexArr = self.UnShuffleIndexArr(subjectIndexArr, dekey);
+        decryptedString = self.ConvertFromIndexArr(unShuffledIndexArr);
+        decryptedSubjectArr = decryptedString.split(":;:");
+        decryptedPrefix = decryptedSubjectArr[0];
+        decryptedSubject =  "";
+        if decryptedPrefix == self.nonstate['prefix']:
+            #success decrypt at level 0
+            i = 0;
+            for decrypted in decryptedSubjectArr:
+                if i != 0:
+                    if len(decryptedSubject) == 0:
+                        decryptedSubject += decrypted;
+                    else :
+                        decryptedSubject += ':;:' + decrypted;
+                i += 1;
+        return decryptedSubject;
     #PRIVATES
     def GenerateEncryptionKey(self):
         if self.mode != "":
             timeCode = self.GetTimeCode(self.mode, 0);
         else:
             timeCode = "";
-        
+    
         #your encryption key gen algorithm/pattern here
         return str(self.key) + str(timeCode);
 
@@ -153,6 +181,9 @@ class InfinityEncryptor:
         # your decryption key gen algorithm/pattern here, must match encryption pattern
         return self.ReverseSequence(str(self.key) + str(timeCode));
         
+    def GenerateDecryptionKey_Enkey(self, enkey):
+        return self.ReverseSequence(enkey);
+
     def GetTimecode(self, mode, level):
         dateNow = datetime.datetime.now();
         dateByLevel = dateNow - datetime.timedelta(minutes=level);
@@ -225,7 +256,7 @@ class InfinityEncryptor:
                 indexArr.append(char);
         return indexArr;
 
-    def  ConvertFormIndexArr(self, indexArr):
+    def ConvertFromIndexArr(self, indexArr):
         subjectArr = [];
         alphaNumMapValues = self.nonstate['alphaNumMap'].values();
         for index in indexArr:

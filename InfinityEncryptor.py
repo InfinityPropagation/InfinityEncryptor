@@ -98,7 +98,7 @@ class InfinityEncryptor:
         );
         shuffledIndexArr = self.ShuffleIndexArr(subjectIndexArr, enkey);
         encryptedString = self.ConvertFromIndexArr(shuffledIndexArr)
-        return {"key": enkey, "encryoted": encryptedString};
+        return {"key": enkey, "encrypted": encryptedString};
 
     def Decrypt(self, subject):
         dekey = self.GenerateDecryptionKey(0).replace('0', '1');
@@ -145,12 +145,13 @@ class InfinityEncryptor:
 
     def Decrypt_Enkey(self, subject, enkey):
         dekey = self.GenerateDecryptionKey_Enkey(enkey).replace('0', '1');
-        subjectIndexArr  = self.GenerateDecryptionKey(0).replace('0', '1');
+        subjectIndexArr  = self.ConvertToIndexArr(subject);
         unShuffledIndexArr = self.UnShuffleIndexArr(subjectIndexArr, dekey);
         decryptedString = self.ConvertFromIndexArr(unShuffledIndexArr);
         decryptedSubjectArr = decryptedString.split(":;:");
         decryptedPrefix = decryptedSubjectArr[0];
         decryptedSubject =  "";
+        print('checkDecryptedPrefix: ' + decryptedPrefix);
         if decryptedPrefix == self.nonstate['prefix']:
             #success decrypt at level 0
             i = 0;
@@ -165,7 +166,7 @@ class InfinityEncryptor:
     #PRIVATES
     def GenerateEncryptionKey(self):
         if self.mode != "":
-            timeCode = self.GetTimeCode(self.mode, 0);
+            timeCode = self.GetTimecode(self.mode, 0);
         else:
             timeCode = "";
     
@@ -174,7 +175,7 @@ class InfinityEncryptor:
 
     def GenerateDecryptionKey(self, level):
         if self.mode != "":
-            timeCode = self.GetTimeCode(self.mode, level);
+            timeCode = self.GetTimecode(self.mode, level);
         else:
             timeCode = "";
 
@@ -190,7 +191,7 @@ class InfinityEncryptor:
         dateByLevelUtc = dateByLevel.astimezone(datetime.timezone.utc);
         dateStr = dateByLevelUtc.strftime("%Y-%m-%d %H:%M:%S");
         dateTimeArr = dateStr.split(" ");
-        dateArr = dateTimeArr[0].split('/');
+        dateArr = dateTimeArr[0].split('-');
         timeArr = dateTimeArr[1].split(':');
         months = dateArr[0].zfill(2);
         days = dateArr[1].zfill(2);
@@ -241,14 +242,14 @@ class InfinityEncryptor:
 
     def ReverseSequence(self, sequence):
         reversed = "";
-        sequences = sequence.split("");
+        sequences = list(sequence);
         for s in sequences:
             reversed = s + reversed;
         return reversed;
 
     def ConvertToIndexArr(self, subject):
         indexArr = []; #char not in alphaNumMap will remain same character
-        subjects = subject.split("");
+        subjects = list(subject);
         for char in subjects:
             if self.nonstate['alphaNumMap'].get(char) != None:
                 indexArr.append(str(self.nonstate['alphaNumMap'][char]));
@@ -260,7 +261,10 @@ class InfinityEncryptor:
         subjectArr = [];
         alphaNumMapValues = self.nonstate['alphaNumMap'].values();
         for index in indexArr:
-            indexInt = int(index);
+            try:
+                indexInt = int(index);
+            except ValueError:
+                indexInt = float('nan');
             if not math.isnan(indexInt) and indexInt in alphaNumMapValues:
                 subjectArr.append(self.GetAlphaNumMapKey(indexInt));
             else:
@@ -278,21 +282,23 @@ class InfinityEncryptor:
 
     def ShuffleIndexArr(self, indexArr, key):
         shuffled = [];
-        keys = key.split("");
+        keys = list(key);
         keyArr = [];
         for k in keys:
             keyArr.append(int(k));
-
         for index in indexArr:
-            indexInt = int(index);
+            try:
+                indexInt = int(index);
+            except ValueError:
+                indexInt = float('nan');
             if not math.isnan(indexInt):
                 _indexInt = int(index);
                 for k  in keyArr:
                     if _indexInt + k <= self.nonstate['keyIndexMax']:
-                        _intedInt += k;
+                        _indexInt += k;
                     else:
                         _indexInt  = _indexInt + k - self.nonstate['keyIndexMax'];
-                suffled.append(str(_indexInt));
+                shuffled.append(str(_indexInt));
             else:
                 #not an index, put back as the same
                 shuffled.append(index);
@@ -300,20 +306,23 @@ class InfinityEncryptor:
 
     def UnShuffleIndexArr(self, indexArr, key):
         unShuffled = [];
-        keys = key.split("");
+        keys = list(key);
         keyArr = [];
         for k in keys:
             keyArr.append(k);
 
         for index in indexArr:
-            indexInt = int(index);
+            try:
+                indexInt = int(index);
+            except ValueError:
+                indexInt = float('nan');
             if not math.isnan(indexInt):
                 _indexInt = int(index);
                 for k in keyArr:
-                    if _indexInt - k >= self.nonstate['keyIndexMin']:
-                        _indexInt -= k;
+                    if _indexInt - int(k) >= self.nonstate['keyIndexMin']:
+                        _indexInt -= int(k);
                     else:
-                        _indexInt = self.nonstate['keyIndexMax'] - (k - _indexInt);
+                        _indexInt = self.nonstate['keyIndexMax'] - (int(k) - _indexInt);
                 unShuffled.append(str(_indexInt));
             else:
                 #non-index, put back as original

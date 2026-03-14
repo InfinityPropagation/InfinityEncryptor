@@ -120,7 +120,7 @@ class InfinityEncryptor:
             decryptedSubjectArr = decryptedString.split(":;:")
             decryptedPrefix = decryptedSubjectArr[0]
 
-            if decryptedPrefix == self.nonstate['prefix'] and decryptedSubject == '':
+            if decryptedPrefix == self.nonstate['prefix']:
                 i = 0
                 for decrypted in decryptedSubjectArr:
                     if i != 0:
@@ -129,6 +129,7 @@ class InfinityEncryptor:
                         else:
                             decryptedSubject += ':;:' + decrypted
                     i += 1
+                break
 
         if decryptedSubject != "":
             return decryptedSubject

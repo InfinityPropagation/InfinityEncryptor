@@ -107,7 +107,7 @@ try {
                 $decryptedSubjectArr = explode(":;:", $decryptedString);
                 $decryptedPrefix = $decryptedSubjectArr[0];
 
-                if($decryptedPrefix == $this->nonstate["prefix"] && $decryptedSubject == '') {
+                if($decryptedPrefix == $this->nonstate["prefix"]) {
                     //success decrypt at level 0
                     $i = 0;
                     foreach($decryptedSubjectArr as $decrypted) {
@@ -115,6 +115,8 @@ try {
                             $decryptedSubject .= (strlen($decryptedSubject) == 0 ? $decrypted : ':;:' . $decrypted);
                         $i++;
                     }
+
+                    break;
                 }
             }
 

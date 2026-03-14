@@ -111,21 +111,23 @@ class InfinityEncryptor {
             dekeyArr.push(this.GenerateDecryptionKey(i).replace(/0/g, '1'));
         }
 
-    dekeyArr.map((dekey) => {
+    for(let u = 0; u < dekeyArr.length; u++) {
+        const dekey = dekeyArr[u];
         subjectIndexArr = this.ConvertToIndexArr(subject);
         unShuffledIndexArr = this.UnShuffleIndexArr(subjectIndexArr, dekey);
         decryptedString = this.ConvertFromIndexArr(unShuffledIndexArr);
         decryptedSubjectArr = decryptedString.split(':;:');
         decryptedPrefix = decryptedSubjectArr[0];
 
-        if(decryptedPrefix == nonstate.prefix && decryptedSubject == '') {
+        if(decryptedPrefix == nonstate.prefix) {
             //success decrypt at level 0
             decryptedSubjectArr.map((decrypted, i) => {
                 if(i != 0)
                     decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ':;:' + decrypted);
             });
+            break;
         }
-    });
+    }
 
     if(decryptedSubject != '')
       return decryptedSubject;

@@ -71,9 +71,10 @@ try {
             'prefix' => 'INFINITYENCRYPTOR'
         );
 
-        public function __construct($key='88888888', $mode = 'YMDHI' /** default mode */) {
+        public function __construct($key='88888888', $mode = 'YMDHI' /** default mode */, $timeTolerance=1) {
             $this->key = $key;
             $this->mode = $mode;
+            $this->timeTolerance = $timeTolerance;
         }
         public function Encrypt($subject) {
             $enkey = str_replace('0', '1', $this->GenerateEncryptionKey());
@@ -90,49 +91,78 @@ try {
             return array("key" => $enkey, "encrypted" => $encryptedString);
         }
         public function Decrypt($subject) {
-            $dekey;
             $subjectIndexArr; $unShuffledIndexArr; $decryptedString;
             $decryptedSubjectArr; $decryptedPrefix; $decryptedSubject = '';
 
-            $dekey = str_replace('0', '1', $this->GenerateDecryptionKey(0));
-            $subjectIndexArr = $this->ConvertToIndexArr($subject);
-            $unShuffledIndexArr = $this->UnShuffleIndexArr($subjectIndexArr, $dekey);
-            $decryptedString = $this->ConvertFromIndexArr($unShuffledIndexArr);
-            $decryptedSubjectArr = explode(":;:", $decryptedString);
-            $decryptedPrefix = $decryptedSubjectArr[0];
+            //new implementation added timeTolerance control
+            $dekeyArr = [];
+            for($i = 0; $i < ($this->timeTolerance + 1); $i++) {
+                array_push($dekeyArr, str_replace('0', '1', $this->GenerateDecryptionKey($i)));
+            }
 
-            if($decryptedPrefix == $this->nonstate["prefix"]) {
-                //success decrypt at level 0
-                $i = 0;
-                foreach($decryptedSubjectArr as $decrypted) {
-                    if($i != 0)
-                        $decryptedSubject .= (strlen($decryptedSubject) == 0 ? $decrypted : ':;:' . $decrypted);
-                    $i++;
-                }
-                return $decryptedSubject;
-            } else {
-                //trial decrypt at level 1
-                //decrption level indicates whether the data is received ontime, or 1 minute late
-                $dekey = str_replace('0', '1', $this->GenerateDecryptionKey(1)); 
+            foreach($dekeyArr as $dekey) {
                 $subjectIndexArr = $this->ConvertToIndexArr($subject);
                 $unShuffledIndexArr = $this->UnShuffleIndexArr($subjectIndexArr, $dekey);
                 $decryptedString = $this->ConvertFromIndexArr($unShuffledIndexArr);
                 $decryptedSubjectArr = explode(":;:", $decryptedString);
                 $decryptedPrefix = $decryptedSubjectArr[0];
-                
+
                 if($decryptedPrefix == $this->nonstate["prefix"]) {
-                    //success decrypt at level 1
+                    //success decrypt at level 0
                     $i = 0;
                     foreach($decryptedSubjectArr as $decrypted) {
                         if($i != 0)
                             $decryptedSubject .= (strlen($decryptedSubject) == 0 ? $decrypted : ':;:' . $decrypted);
                         $i++;
                     }
-                    return $decryptedSubject;
-                } else {
-                    return 'IEncryptorDecrypt _false';
                 }
             }
+
+            if($decryptedSubject != '')
+                return $decryptedSubject;
+            else
+                return 'IEncryptorDecrypt _false';
+
+            //deprecated of old implementation
+            // $dekey = str_replace('0', '1', $this->GenerateDecryptionKey(0));
+            // $subjectIndexArr = $this->ConvertToIndexArr($subject);
+            // $unShuffledIndexArr = $this->UnShuffleIndexArr($subjectIndexArr, $dekey);
+            // $decryptedString = $this->ConvertFromIndexArr($unShuffledIndexArr);
+            // $decryptedSubjectArr = explode(":;:", $decryptedString);
+            // $decryptedPrefix = $decryptedSubjectArr[0];
+
+            // if($decryptedPrefix == $this->nonstate["prefix"]) {
+            //     //success decrypt at level 0
+            //     $i = 0;
+            //     foreach($decryptedSubjectArr as $decrypted) {
+            //         if($i != 0)
+            //             $decryptedSubject .= (strlen($decryptedSubject) == 0 ? $decrypted : ':;:' . $decrypted);
+            //         $i++;
+            //     }
+            //     return $decryptedSubject;
+            // } else {
+            //     //trial decrypt at level 1
+            //     //decrption level indicates whether the data is received ontime, or 1 minute late
+            //     $dekey = str_replace('0', '1', $this->GenerateDecryptionKey(1)); 
+            //     $subjectIndexArr = $this->ConvertToIndexArr($subject);
+            //     $unShuffledIndexArr = $this->UnShuffleIndexArr($subjectIndexArr, $dekey);
+            //     $decryptedString = $this->ConvertFromIndexArr($unShuffledIndexArr);
+            //     $decryptedSubjectArr = explode(":;:", $decryptedString);
+            //     $decryptedPrefix = $decryptedSubjectArr[0];
+                
+            //     if($decryptedPrefix == $this->nonstate["prefix"]) {
+            //         //success decrypt at level 1
+            //         $i = 0;
+            //         foreach($decryptedSubjectArr as $decrypted) {
+            //             if($i != 0)
+            //                 $decryptedSubject .= (strlen($decryptedSubject) == 0 ? $decrypted : ':;:' . $decrypted);
+            //             $i++;
+            //         }
+            //         return $decryptedSubject;
+            //     } else {
+            //         return 'IEncryptorDecrypt _false';
+            //     }
+            // }
         }
         public function Decrypt_Enkey($subject, $enkey) {
             $dekey = $this->GenerateDecryptionKey_Enkey($enkey);

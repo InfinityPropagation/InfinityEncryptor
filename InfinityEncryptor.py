@@ -2,7 +2,7 @@ import datetime;
 import math;
 
 class InfinityEncryptor:
-    def __init__(self, key, mode):
+    def __init__(self, key, mode, timeTolerance):
         try:
             self.key = key.replace("0","");
         except:
@@ -11,6 +11,11 @@ class InfinityEncryptor:
             self.mode =  mode;
         except:
             self.mode = "YMDHI"; #Y-year, M-month, D-date, H-hour, I-minute, if mode set to '' (empty), no time code will be generated
+        try:
+            self.timeTolerance = timeTolerance;
+        except:
+            self.timeTolerance = 1;
+        
         self.nonstate = {
             'alphaNumMap': {
                 "0": 1,
@@ -101,47 +106,34 @@ class InfinityEncryptor:
         return {"key": enkey, "encrypted": encryptedString};
 
     def Decrypt(self, subject):
-        dekey = self.GenerateDecryptionKey(0).replace('0', '1');
-        subjectIndexArr  = self.ConvertToIndexArr(subject);
-        unShuffledIndexArr = self.UnShuffleIndexArr(subjectIndexArr, dekey);
-        decryptedString = self.ConvertFromIndexArr(unShuffledIndexArr);
-        decryptedSubjectArr = decryptedString.split(":;:");
-        decryptedPrefix = decryptedSubjectArr[0];
-        decryptedSubject =  "";
-        
-        if decryptedPrefix == self.nonstate['prefix']:
-            #success decrypt at level 0
-            i = 0;
-            for decrypted in decryptedSubjectArr:
-                if i != 0:
-                    if len(decryptedSubject) == 0:
-                        decryptedSubject += decrypted;
-                    else :
-                        decryptedSubject += ':;:' + decrypted;
-                i += 1;
-            return decryptedSubject;
-        else:
-            # trial decrypt at level 1
-            # decryption level indicates whethher the data is received ontime, or 1 minute late
-            dekey = self.GenerateDecryptionKey(1).replace('0', '1');
-            subjectIndexArr = self.ConvertToIndexArr(subject);
-            unShuffledIndexArr = self.UnShuffleIndexArr(subjectIndexArr, dekey);
-            decryptedString = self.ConvertFromIndexArr(unShuffledIndexArr);
-            decryptedSubjectArr = decryptedString.split(":;:");
-            decryptedPrefix = decryptedSubjectArr[0];
+        decryptedSubject = ""
+
+        # new implementation added timeTolerance control
+        dekeyArr = []
+        for i in range(self.timeTolerance + 1):
+            dekeyArr.append(self.GenerateDecryptionKey(i).replace('0', '1'))
+
+        for dekey in dekeyArr:
+            subjectIndexArr = self.ConvertToIndexArr(subject)
+            unShuffledIndexArr = self.UnShuffleIndexArr(subjectIndexArr, dekey)
+            decryptedString = self.ConvertFromIndexArr(unShuffledIndexArr)
+            decryptedSubjectArr = decryptedString.split(":;:")
+            decryptedPrefix = decryptedSubjectArr[0]
+
             if decryptedPrefix == self.nonstate['prefix']:
-                # success decrypt at level 0
-                i = 0;
+                i = 0
                 for decrypted in decryptedSubjectArr:
                     if i != 0:
                         if len(decryptedSubject) == 0:
-                            decryptedSubject += decrypted;
+                            decryptedSubject += decrypted
                         else:
-                            decryptedSubject += ':;:' + decrypted;
-                    i += 1;
-                return decryptedSubject;
-            else :
-                return "IEncryptorDecrypt _false";
+                            decryptedSubject += ':;:' + decrypted
+                    i += 1
+
+        if decryptedSubject != "":
+            return decryptedSubject
+        else:
+            return "IEncryptorDecrypt _false"
 
     def Decrypt_Enkey(self, subject, enkey):
         dekey = self.GenerateDecryptionKey_Enkey(enkey).replace('0', '1');

@@ -71,12 +71,15 @@ const nonstate = {
 class InfinityEncryptor {
   key = "88888888" //0 is useless
   mode = "YMDHI" //Y-year, M-month, D-date, H-hour, I-minute, if mode set to '' (empty), no time code will be generated
+  timeTolerance = 1;
 
   constructor(key, mode) {
     if(key != undefined)
       this.key = key.replace(/0/g, "");
     
     this.mode = mode != undefined ? mode : "YMDHI"
+
+    this.timeTolerance = this.timeTolerance != undefiend ? this.timeTolerance : this.timeTolerance;
   }
   Encrypt(subject) {
     const enkey = this.GenerateEncryptionKey().replace(/0/g, '1');
@@ -95,7 +98,6 @@ class InfinityEncryptor {
     return {key: enkey, encrypted: encryptedString};
   }
   Decrypt(subject) {
-    let dekey
     let subjectIndexArr
     let unShuffledIndexArr
     let decryptedString
@@ -103,40 +105,69 @@ class InfinityEncryptor {
     let decryptedPrefix
     let decryptedSubject = ""
 
+    //new imp added timeTolerance factor
+    const dekeyArr = [];
+            for(let i = 0; i < this.timeTolerance + 1; i++) {
+            dekeyArr.push(this.GenerateDecryptionKey(i).replace(/0/g, '1'));
+        }
+
+    dekeyArr.map((dekey) => {
+        subjectIndexArr = this.ConvertToIndexArr(subject);
+        unShuffledIndexArr = this.UnShuffleIndexArr(subjectIndexArr, dekey);
+        decryptedString = this.ConvertFromIndexArr(unShuffledIndexArr);
+        decryptedSubjectArr = decryptedString.split(':;:');
+        decryptedPrefix = decryptedSubjectArr[0];
+
+        if(decryptedPrefix == nonstate.prefix) {
+            //success decrypt at level 0
+            decryptedSubjectArr.map((decrypted, i) => {
+                if(i != 0)
+                    decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ':;:' + decrypted);
+            });
+        }
+    });
+
+    if(decryptedSubject != '')
+      return decryptedSubject;
+    else
+      return 'IEncryptorDecrypt _false';
+
+
+    //old implementation deprecated
     //trial decrypt at level 0
     //decrption level indicates whether the data is received ontime, or 1 minute late
-    dekey = this.GenerateDecryptionKey(0).replace(/0/g, '1');
-    subjectIndexArr = this.ConvertToIndexArr(subject)
-    unShuffledIndexArr = this.UnShuffleIndexArr(subjectIndexArr, dekey)
-    decryptedString = this.ConvertFromIndexArr(unShuffledIndexArr)
-    decryptedSubjectArr = decryptedString.split(":;:")
-    decryptedPrefix = decryptedSubjectArr[0]
+    // dekey = this.GenerateDecryptionKey(0).replace(/0/g, '1');
+    // subjectIndexArr = this.ConvertToIndexArr(subject)
+    // unShuffledIndexArr = this.UnShuffleIndexArr(subjectIndexArr, dekey)
+    // decryptedString = this.ConvertFromIndexArr(unShuffledIndexArr)
+    // decryptedSubjectArr = decryptedString.split(":;:")
+    // decryptedPrefix = decryptedSubjectArr[0]
 
-    if (decryptedPrefix == nonstate.prefix) {
-      //success decrypt at level 0
-      decryptedSubjectArr.map((decrypted, i) => {
-        if (i != 0) decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ':;:' + decrypted)
-      })
-      return decryptedSubject
-    } else {
-      //trial decrypt at level 1
-      //decrption level indicates whether the data is received ontime, or 1 minute late
-      dekey = this.GenerateDecryptionKey(1).replace(/0/g, '1');
-      subjectIndexArr = this.ConvertToIndexArr(subject)
-      unShuffledIndexArr = this.UnShuffleIndexArr(subjectIndexArr, dekey)
-      decryptedString = this.ConvertFromIndexArr(unShuffledIndexArr)
-      decryptedSubjectArr = decryptedString.split(":;:")
-      decryptedPrefix = decryptedSubjectArr[0]
-      if (decryptedPrefix == nonstate.prefix) {
-        //success decrypt at level 1
-        decryptedSubjectArr.map((decrypted, i) => {
-          if (i != 0) decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ':;:' + decrypted)
-        })
-        return decryptedSubject
-      } else {
-        return "IEncryptorDecrypt _false"
-      }
-    }
+    // if (decryptedPrefix == nonstate.prefix) {
+    //   //success decrypt at level 0
+    //   decryptedSubjectArr.map((decrypted, i) => {
+    //     if (i != 0) decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ':;:' + decrypted)
+    //   })
+    //   return decryptedSubject
+    // } else {
+    //   //trial decrypt at level 1
+    //   //decrption level indicates whether the data is received ontime, or 1 minute late
+    //   dekey = this.GenerateDecryptionKey(1).replace(/0/g, '1');
+    //   subjectIndexArr = this.ConvertToIndexArr(subject)
+    //   unShuffledIndexArr = this.UnShuffleIndexArr(subjectIndexArr, dekey)
+    //   decryptedString = this.ConvertFromIndexArr(unShuffledIndexArr)
+    //   decryptedSubjectArr = decryptedString.split(":;:")
+    //   decryptedPrefix = decryptedSubjectArr[0]
+    //   if (decryptedPrefix == nonstate.prefix) {
+    //     //success decrypt at level 1
+    //     decryptedSubjectArr.map((decrypted, i) => {
+    //       if (i != 0) decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ':;:' + decrypted)
+    //     })
+    //     return decryptedSubject
+    //   } else {
+    //     return "IEncryptorDecrypt _false"
+    //   }
+    // }
   }
   Decrypt_Enkey(subject, enkey) {
     const dekey = this.GenerateDecryptionKey_Enkey(enkey);

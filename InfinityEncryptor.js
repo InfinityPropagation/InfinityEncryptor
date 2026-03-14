@@ -118,7 +118,7 @@ class InfinityEncryptor {
         decryptedSubjectArr = decryptedString.split(':;:');
         decryptedPrefix = decryptedSubjectArr[0];
 
-        if(decryptedPrefix == nonstate.prefix) {
+        if(decryptedPrefix == nonstate.prefix && decryptedSubject == '') {
             //success decrypt at level 0
             decryptedSubjectArr.map((decrypted, i) => {
                 if(i != 0)

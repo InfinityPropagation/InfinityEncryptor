@@ -96,9 +96,6 @@ class InfinityEncryptor {
         return {key: enkey, encrypted: encryptedString};
     }
     public Decrypt(subject: string) {
-        if(subject.trim() == '')
-            return subject;
-
         // let dekey = '';
         let subjectIndexArr; let unShuffledIndexArr; let decryptedString;
         let decryptedSubjectArr; let decryptedPrefix; let decryptedSubject = '';
@@ -118,7 +115,6 @@ class InfinityEncryptor {
             decryptedPrefix = decryptedSubjectArr[0];
 
             if(decryptedPrefix == nonstate.prefix) {
-                dlog('checkDecryptedPrefix: ' + decryptedPrefix);
                 //success decrypt at level 0
                 decryptedSubjectArr.map((decrypted: string, i: number) => {
                     if(i != 0) {
@@ -129,7 +125,7 @@ class InfinityEncryptor {
             }
         }
 
-        if(decryptedSubject != '')
+        if(decryptedSubject != '' || (decryptedSubjectArr && decryptedSubjectArr[1].trim() == ''))
             return decryptedSubject;
         else {
             return 'IEncryptorDecrypt _false';
@@ -177,9 +173,6 @@ class InfinityEncryptor {
         // }
     }
     public Decrypt_Enkey(subject: string, enkey: string) {
-        if(subject.trim() == '')
-            return subject;
-
         const dekey = this.GenerateDecryptionKey_Enkey(enkey);
         const subjectIndexArr = this.ConvertToIndexArr(subject);
         const unShuffledIndexArr = this.UnShuffleIndexArr(subjectIndexArr, dekey);

@@ -106,9 +106,6 @@ class InfinityEncryptor:
         return {"key": enkey, "encrypted": encryptedString};
 
     def Decrypt(self, subject):
-        if subject == "":
-            return subject;
-
         decryptedSubject = ""
 
         # new implementation added timeTolerance control
@@ -134,15 +131,12 @@ class InfinityEncryptor:
                     i += 1
                 break
 
-        if decryptedSubject != "":
+        if decryptedSubject != "" or decryptedSubjectArr[1] == "":
             return decryptedSubject
         else:
             return "IEncryptorDecrypt _false"
 
     def Decrypt_Enkey(self, subject, enkey):
-        if subject == "":
-            return subject;
-
         dekey = self.GenerateDecryptionKey_Enkey(enkey).replace('0', '1');
         subjectIndexArr  = self.ConvertToIndexArr(subject);
         unShuffledIndexArr = self.UnShuffleIndexArr(subjectIndexArr, dekey);

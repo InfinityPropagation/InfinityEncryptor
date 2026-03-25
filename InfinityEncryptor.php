@@ -95,9 +95,6 @@ try {
             return array("key" => $enkey, "encrypted" => $encryptedString);
         }
         public function Decrypt($subject) {
-            if(empty($subject))
-                return $subject;
-
             $subjectIndexArr; $unShuffledIndexArr; $decryptedString;
             $decryptedSubjectArr; $decryptedPrefix; $decryptedSubject = '';
 
@@ -127,7 +124,7 @@ try {
                 }
             }
 
-            if($decryptedSubject != '')
+            if($decryptedSubject != '' || empty($decryptedSubjectArr[1]))
                 return $decryptedSubject;
             else
                 return 'IEncryptorDecrypt _false';
@@ -174,9 +171,6 @@ try {
             // }
         }
         public function Decrypt_Enkey($subject, $enkey) {
-            if(empty($subject))
-                return $subject;
-
             $dekey = $this->GenerateDecryptionKey_Enkey($enkey);
             $subjectIndexArr = $this->ConvertToIndexArr($subject);
             $unShuffledIndexArr = $this->UnShuffleIndexArr($subjectIndexArr, $dekey);

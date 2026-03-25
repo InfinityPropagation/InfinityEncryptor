@@ -71,6 +71,10 @@ try {
             'prefix' => 'INFINITYENCRYPTOR'
         );
 
+        public $key;
+        public $mode;
+        public $timeTolerance;
+
         public function __construct($key='88888888', $mode = 'YMDHI' /** default mode */, $timeTolerance=1) {
             $this->key = $key;
             $this->mode = $mode;
@@ -91,6 +95,9 @@ try {
             return array("key" => $enkey, "encrypted" => $encryptedString);
         }
         public function Decrypt($subject) {
+            if(empty($subject))
+                return $subject;
+
             $subjectIndexArr; $unShuffledIndexArr; $decryptedString;
             $decryptedSubjectArr; $decryptedPrefix; $decryptedSubject = '';
 
@@ -167,6 +174,9 @@ try {
             // }
         }
         public function Decrypt_Enkey($subject, $enkey) {
+            if(empty($subject))
+                return $subject;
+
             $dekey = $this->GenerateDecryptionKey_Enkey($enkey);
             $subjectIndexArr = $this->ConvertToIndexArr($subject);
             $unShuffledIndexArr = $this->UnShuffleIndexArr($subjectIndexArr, $dekey);

@@ -96,6 +96,9 @@ class InfinityEncryptor {
         return {key: enkey, encrypted: encryptedString};
     }
     public Decrypt(subject: string) {
+        if(subject.trim() == '')
+            return subject;
+
         // let dekey = '';
         let subjectIndexArr; let unShuffledIndexArr; let decryptedString;
         let decryptedSubjectArr; let decryptedPrefix; let decryptedSubject = '';
@@ -174,6 +177,9 @@ class InfinityEncryptor {
         // }
     }
     public Decrypt_Enkey(subject: string, enkey: string) {
+        if(subject.trim() == '')
+            return subject;
+
         const dekey = this.GenerateDecryptionKey_Enkey(enkey);
         const subjectIndexArr = this.ConvertToIndexArr(subject);
         const unShuffledIndexArr = this.UnShuffleIndexArr(subjectIndexArr, dekey);

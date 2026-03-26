@@ -84,7 +84,7 @@ class InfinityEncryptor {
   Encrypt(subject) {
     const enkey = this.GenerateEncryptionKey().replace(/0/g, '1');
     const subjectIndexArr = this.ConvertToIndexArr(
-      nonstate.prefix + ":;:" + subject
+      nonstate.prefix + ";:;" + subject
     )
     const shuffledIndexArr = this.ShuffleIndexArr(subjectIndexArr, enkey)
     const encryptedString = this.ConvertFromIndexArr(shuffledIndexArr)
@@ -92,7 +92,7 @@ class InfinityEncryptor {
   }
   Encrypt_GenKey(subject) {
     const enkey = this.GenerateEncryptionKey().replace(/0/g, '1');
-    const subjectIndexArr = this.ConvertToIndexArr(nonstate.prefix + ':;:' + subject);
+    const subjectIndexArr = this.ConvertToIndexArr(nonstate.prefix + ';:;' + subject);
     const shuffledIndexArr = this.ShuffleIndexArr(subjectIndexArr, enkey);
     const encryptedString = this.ConvertFromIndexArr(shuffledIndexArr);
     return {key: enkey, encrypted: encryptedString};
@@ -116,14 +116,14 @@ class InfinityEncryptor {
         subjectIndexArr = this.ConvertToIndexArr(subject);
         unShuffledIndexArr = this.UnShuffleIndexArr(subjectIndexArr, dekey);
         decryptedString = this.ConvertFromIndexArr(unShuffledIndexArr);
-        decryptedSubjectArr = decryptedString.split(':;:');
+        decryptedSubjectArr = decryptedString.split(';:;');
         decryptedPrefix = decryptedSubjectArr[0];
 
         if(decryptedPrefix == nonstate.prefix) {
             //success decrypt at level 0
             decryptedSubjectArr.map((decrypted, i) => {
                 if(i != 0)
-                    decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ':;:' + decrypted);
+                    decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ';:;' + decrypted);
             });
             break;
         }
@@ -142,13 +142,13 @@ class InfinityEncryptor {
     // subjectIndexArr = this.ConvertToIndexArr(subject)
     // unShuffledIndexArr = this.UnShuffleIndexArr(subjectIndexArr, dekey)
     // decryptedString = this.ConvertFromIndexArr(unShuffledIndexArr)
-    // decryptedSubjectArr = decryptedString.split(":;:")
+    // decryptedSubjectArr = decryptedString.split(";:;")
     // decryptedPrefix = decryptedSubjectArr[0]
 
     // if (decryptedPrefix == nonstate.prefix) {
     //   //success decrypt at level 0
     //   decryptedSubjectArr.map((decrypted, i) => {
-    //     if (i != 0) decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ':;:' + decrypted)
+    //     if (i != 0) decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ';:;' + decrypted)
     //   })
     //   return decryptedSubject
     // } else {
@@ -158,12 +158,12 @@ class InfinityEncryptor {
     //   subjectIndexArr = this.ConvertToIndexArr(subject)
     //   unShuffledIndexArr = this.UnShuffleIndexArr(subjectIndexArr, dekey)
     //   decryptedString = this.ConvertFromIndexArr(unShuffledIndexArr)
-    //   decryptedSubjectArr = decryptedString.split(":;:")
+    //   decryptedSubjectArr = decryptedString.split(";:;")
     //   decryptedPrefix = decryptedSubjectArr[0]
     //   if (decryptedPrefix == nonstate.prefix) {
     //     //success decrypt at level 1
     //     decryptedSubjectArr.map((decrypted, i) => {
-    //       if (i != 0) decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ':;:' + decrypted)
+    //       if (i != 0) decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ';:;' + decrypted)
     //     })
     //     return decryptedSubject
     //   } else {
@@ -176,13 +176,13 @@ class InfinityEncryptor {
     const subjectIndexArr = this.ConvertToIndexArr(subject);
     const unShuffledIndexArr = this.UnShuffleIndexArr(subjectIndexArr, dekey);
     const decryptedString = this.ConvertFromIndexArr(unShuffledIndexArr);
-    const decryptedSubjectArr = decryptedString.split(':;:');
+    const decryptedSubjectArr = decryptedString.split(';:;');
     const decryptedPrefix = decryptedSubjectArr[0];
     let decryptedSubject = "";
     if(decryptedPrefix == nonstate.prefix) {
         decryptedSubjectArr.map((decrypted, i) => {
             if(i != 0)
-                decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ':;:' + decrypted);
+                decryptedSubject += (decryptedSubject.length == 0 ? decrypted : ';:;' + decrypted);
         });
     } else {
         return 'IEncryptorDecryptWithEnkeyErr prefixUnMatch _false';

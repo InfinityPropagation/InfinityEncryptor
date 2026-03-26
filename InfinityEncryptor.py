@@ -90,7 +90,7 @@ class InfinityEncryptor:
     def Encrypt(self, subject):
         enkey = self.GenerateEncryptionKey().replace("0", '1');
         subjectIndexArr  = self.ConvertToIndexArr(
-            self.nonstate['prefix'] + ':;:' + subject
+            self.nonstate['prefix'] + ';:;' + subject
         );
         shuffledIndexArr = self.ShuffleIndexArr(subjectIndexArr, enkey);
         encryptedString = self.ConvertFromIndexArr(shuffledIndexArr)
@@ -99,7 +99,7 @@ class InfinityEncryptor:
     def Encrypt_GenKey(self, subject):
         enkey = self.GenerateEncryptionKey().replace("0", '1');
         subjectIndexArr  = self.ConvertToIndexArr(
-            self.nonstate['prefix'] + ':;:' + subject
+            self.nonstate['prefix'] + ';:;' + subject
         );
         shuffledIndexArr = self.ShuffleIndexArr(subjectIndexArr, enkey);
         encryptedString = self.ConvertFromIndexArr(shuffledIndexArr)
@@ -117,7 +117,7 @@ class InfinityEncryptor:
             subjectIndexArr = self.ConvertToIndexArr(subject)
             unShuffledIndexArr = self.UnShuffleIndexArr(subjectIndexArr, dekey)
             decryptedString = self.ConvertFromIndexArr(unShuffledIndexArr)
-            decryptedSubjectArr = decryptedString.split(":;:")
+            decryptedSubjectArr = decryptedString.split(";:;")
             decryptedPrefix = decryptedSubjectArr[0]
 
             if decryptedPrefix == self.nonstate['prefix']:
@@ -127,7 +127,7 @@ class InfinityEncryptor:
                         if len(decryptedSubject) == 0:
                             decryptedSubject += decrypted
                         else:
-                            decryptedSubject += ':;:' + decrypted
+                            decryptedSubject += ';:;' + decrypted
                     i += 1
                 break
 
@@ -141,7 +141,7 @@ class InfinityEncryptor:
         subjectIndexArr  = self.ConvertToIndexArr(subject);
         unShuffledIndexArr = self.UnShuffleIndexArr(subjectIndexArr, dekey);
         decryptedString = self.ConvertFromIndexArr(unShuffledIndexArr);
-        decryptedSubjectArr = decryptedString.split(":;:");
+        decryptedSubjectArr = decryptedString.split(";:;");
         decryptedPrefix = decryptedSubjectArr[0];
         decryptedSubject =  "";
         print('checkDecryptedPrefix: ' + decryptedPrefix);
@@ -153,7 +153,7 @@ class InfinityEncryptor:
                     if len(decryptedSubject) == 0:
                         decryptedSubject += decrypted;
                     else :
-                        decryptedSubject += ':;:' + decrypted;
+                        decryptedSubject += ';:;' + decrypted;
                 i += 1;
         return decryptedSubject;
     #PRIVATES

@@ -82,14 +82,14 @@ try {
         }
         public function Encrypt($subject) {
             $enkey = str_replace('0', '1', $this->GenerateEncryptionKey());
-            $subjectIndexArr = $this->ConvertToIndexArr($this->nonstate["prefix"] . ":;:" .$subject);
+            $subjectIndexArr = $this->ConvertToIndexArr($this->nonstate["prefix"] . ";:;" .$subject);
             $shuffledIndexArr = $this->ShuffleIndexArr($subjectIndexArr, $enkey);
             $encryptedString = $this->ConvertFromIndexArr($shuffledIndexArr);
             return $encryptedString;
         }
         public function Encrypt_GenKey($subject) {
             $enkey = str_replace('0', '1', $this->GenerateEncryptionKey());
-            $subjectIndexArr = $this->ConvertToIndexArr($this->nonstate["prefix"] . ":;:" .$subject);
+            $subjectIndexArr = $this->ConvertToIndexArr($this->nonstate["prefix"] . ";:;" .$subject);
             $shuffledIndexArr = $this->ShuffleIndexArr($subjectIndexArr, $enkey);
             $encryptedString = $this->ConvertFromIndexArr($shuffledIndexArr);
             return array("key" => $enkey, "encrypted" => $encryptedString);
@@ -108,7 +108,7 @@ try {
                 $subjectIndexArr = $this->ConvertToIndexArr($subject);
                 $unShuffledIndexArr = $this->UnShuffleIndexArr($subjectIndexArr, $dekey);
                 $decryptedString = $this->ConvertFromIndexArr($unShuffledIndexArr);
-                $decryptedSubjectArr = explode(":;:", $decryptedString);
+                $decryptedSubjectArr = explode(";:;", $decryptedString);
                 $decryptedPrefix = $decryptedSubjectArr[0];
 
                 if($decryptedPrefix == $this->nonstate["prefix"]) {
@@ -116,7 +116,7 @@ try {
                     $i = 0;
                     foreach($decryptedSubjectArr as $decrypted) {
                         if($i != 0)
-                            $decryptedSubject .= (strlen($decryptedSubject) == 0 ? $decrypted : ':;:' . $decrypted);
+                            $decryptedSubject .= (strlen($decryptedSubject) == 0 ? $decrypted : ';:;' . $decrypted);
                         $i++;
                     }
 
@@ -134,7 +134,7 @@ try {
             // $subjectIndexArr = $this->ConvertToIndexArr($subject);
             // $unShuffledIndexArr = $this->UnShuffleIndexArr($subjectIndexArr, $dekey);
             // $decryptedString = $this->ConvertFromIndexArr($unShuffledIndexArr);
-            // $decryptedSubjectArr = explode(":;:", $decryptedString);
+            // $decryptedSubjectArr = explode(";:;", $decryptedString);
             // $decryptedPrefix = $decryptedSubjectArr[0];
 
             // if($decryptedPrefix == $this->nonstate["prefix"]) {
@@ -142,7 +142,7 @@ try {
             //     $i = 0;
             //     foreach($decryptedSubjectArr as $decrypted) {
             //         if($i != 0)
-            //             $decryptedSubject .= (strlen($decryptedSubject) == 0 ? $decrypted : ':;:' . $decrypted);
+            //             $decryptedSubject .= (strlen($decryptedSubject) == 0 ? $decrypted : ';:;' . $decrypted);
             //         $i++;
             //     }
             //     return $decryptedSubject;
@@ -153,7 +153,7 @@ try {
             //     $subjectIndexArr = $this->ConvertToIndexArr($subject);
             //     $unShuffledIndexArr = $this->UnShuffleIndexArr($subjectIndexArr, $dekey);
             //     $decryptedString = $this->ConvertFromIndexArr($unShuffledIndexArr);
-            //     $decryptedSubjectArr = explode(":;:", $decryptedString);
+            //     $decryptedSubjectArr = explode(";:;", $decryptedString);
             //     $decryptedPrefix = $decryptedSubjectArr[0];
                 
             //     if($decryptedPrefix == $this->nonstate["prefix"]) {
@@ -161,7 +161,7 @@ try {
             //         $i = 0;
             //         foreach($decryptedSubjectArr as $decrypted) {
             //             if($i != 0)
-            //                 $decryptedSubject .= (strlen($decryptedSubject) == 0 ? $decrypted : ':;:' . $decrypted);
+            //                 $decryptedSubject .= (strlen($decryptedSubject) == 0 ? $decrypted : ';:;' . $decrypted);
             //             $i++;
             //         }
             //         return $decryptedSubject;
@@ -175,7 +175,7 @@ try {
             $subjectIndexArr = $this->ConvertToIndexArr($subject);
             $unShuffledIndexArr = $this->UnShuffleIndexArr($subjectIndexArr, $dekey);
             $decryptedString = $this->ConvertFromIndexArr($unShuffledIndexArr);
-            $decryptedSubjectArr = explode(":;:", $decryptedString);
+            $decryptedSubjectArr = explode(";:;", $decryptedString);
             $decryptedPrefix = $decryptedSubjectArr[0];
             $decryptedSubject = "";
             if($decryptedPrefix == $this->nonstate["prefix"]) {
@@ -183,7 +183,7 @@ try {
                 foreach($decryptedSubjectArr as $decrypted) {
                     $i++;
                     if($i != 0)
-                        $decryptedSubject .= (strlen($decryptedSubject) == 0 ? $decrypted : ':;:' . $decrypted);
+                        $decryptedSubject .= (strlen($decryptedSubject) == 0 ? $decrypted : ';:;' . $decrypted);
                 }
             } else {
                 return 'IEncryptorDecryptWithEnkeyErr prefixUnMatch _false';
